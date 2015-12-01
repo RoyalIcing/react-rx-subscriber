@@ -3,6 +3,8 @@
 Allows your pure React components to subscribe to Rx Observables by transforming
 them into props.
 
+## Example
+
 ```javascript
 // components/List.js
 
@@ -15,32 +17,13 @@ export default function List({ items }) {
 }
 ```
 
-An observable of some sort, this example loads JSON, but yours can do whatever
-you like.
-
-```javascript
-// services/list.js
-import Rx from 'rx-lite';
-import fetch from 'whatwg-fetch';
-
-const listSubject = ReplaySubject(1);
-export const listObservable = listSubject.asObservable();
-
-export function loadList() {
-  Rx.Observable.fromPromise(
-    fetch('/list.json')
-  ).subscribe(listSubject);
-}
-```
-
-Subscribe to the observable and transform its value into the prop `items`.
-Shows a spinner until items are ready:
+Subscribe to an observable and transform its value into the prop `items`.
+As `items` will initially be `undefined`, show a spinner until they are ready:
 
 ```javascript
 // containers/list.js
 import React from 'react';
 import subscriber from 'react-rx-subscriber';
-import pending from 'react-pending';
 import Spinner from 'react-spinner';
 
 import List from '../components/List';
@@ -54,6 +37,7 @@ export default subscriber([
 ```
 
 ```javascript
+// Rendering:
 <PendingList />
 ```
 
@@ -90,6 +74,7 @@ export default subscriber(({ id }) => [
 ```
 
 ```javascript
+// Rendering:
 <PendingList id={ '123' } />
 ```
 
