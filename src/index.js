@@ -7,7 +7,6 @@ class SubscriberWrapper extends React.Component {
     super(props);
 
     this.state = {};
-    this.disposable = new Rx.CompositeDisposable();
   }
 
   subscribeOnNext(observable) {
@@ -20,8 +19,14 @@ class SubscriberWrapper extends React.Component {
     );
   }
 
-  componentDidMount() {
-    let { observables: resolvedObservables, forwardedProps } = this.props;
+  subscribeToObservables(props) {
+    if (this.disposable) {
+      this.disposable.dispose();
+    }
+
+    this.disposable = new Rx.CompositeDisposable();
+
+    let { observables: resolvedObservables, forwardedProps } = props;
     if (isFunction(resolvedObservables)) {
       resolvedObservables = resolvedObservables(forwardedProps);
     }
@@ -29,6 +34,14 @@ class SubscriberWrapper extends React.Component {
     resolvedObservables.forEach(observable => {
       this.subscribeOnNext(observable);
     });
+  }
+
+  componentDidMount() {
+    this.subscribeToObservables(this.props);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    this.subscribeToObservables(nextProps);
   }
 
   componentWillUnmount() {
