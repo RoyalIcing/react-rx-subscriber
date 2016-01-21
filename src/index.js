@@ -28,12 +28,17 @@ class SubscriberWrapper extends React.Component {
 
     let { observables: resolvedObservables, forwardedProps } = props;
     if (isFunction(resolvedObservables)) {
-      resolvedObservables = resolvedObservables(forwardedProps);
+      this.propsSubject = new Rx.Subject();
+      resolvedObservables = resolvedObservables(this.propsSubject.asObservable());
     }
 
     resolvedObservables.forEach(observable => {
       this.subscribeOnNext(observable);
     });
+
+    if (this.propsSubject) {
+      this.propsSubject.onNext(props);
+    }
   }
 
   componentDidMount() {
@@ -41,7 +46,9 @@ class SubscriberWrapper extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    this.subscribeToObservables(nextProps);
+    if (this.propsSubject) {
+      this.propsSubject.onNext(nextProps);
+    }
   }
 
   componentWillUnmount() {

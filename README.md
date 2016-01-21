@@ -46,30 +46,21 @@ export default subscriber([
 Dynamic observables that depend on the inputted props are also supported:
 
 ```javascript
-// services/list.js
-
-//...
-
-export function observableForListWithID(id) {
-  return Rx.Observable.fromPromise(
-    fetch(`/list/${id}`)
-  );
-}
-```
-
-```javascript
 // containers/list.js
 import React from 'react';
 import subscriber from 'react-rx-subscriber';
 import Spinner from 'react-spinner';
 
 import List from '../components/List';
-import { observableForListWithID } from '../services/list';
+import { observeListWithID } from '../services/list';
 
 const PendingList = (props) => !!props.items ? <List { ...props } /> : <Spinner />;
 
-export default subscriber(({ id }) => [
-  observableForListWithID(id).map(items => ({ items })),
+export default subscriber(propsObservable => [
+  propsObservable.map(({ id }) => id)
+    .distinctUntilChanged()
+    .flatMap(observeListWithID)
+    .map(items => ({ items })),
 ])(PendingList);
 ```
 
