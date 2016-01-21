@@ -26,14 +26,15 @@ class SubscriberWrapper extends React.Component {
 
     this.disposable = new Rx.CompositeDisposable();
 
-    let { observables: resolvedObservables, forwardedProps } = props;
+    let { observables: resolvedObservables, transformObservable, forwardedProps } = props;
+
     if (isFunction(resolvedObservables)) {
       this.propsSubject = new Rx.Subject();
       resolvedObservables = resolvedObservables(this.propsSubject.asObservable());
     }
 
     resolvedObservables.forEach(observable => {
-      this.subscribeOnNext(observable);
+      this.subscribeOnNext(transformObservable(observable));
     });
 
     if (this.propsSubject) {
@@ -63,8 +64,12 @@ class SubscriberWrapper extends React.Component {
   }
 }
 
-export default function subscriber(observables) {
+function reflect(input) {
+  return input;
+}
+
+export default function subscriber(observables, { transformObservable = reflect } = {}) {
   return (Component) => (props) => (
-    <SubscriberWrapper forwardedProps={ props } observables={ observables } component={ Component } />
+    <SubscriberWrapper forwardedProps={ props } observables={ observables } transformObservable={ transformObservable } component={ Component } />
   );
 }
