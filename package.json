@@ -1,6 +1,6 @@
 {
   "name": "react-rx-subscriber",
-  "version": "0.2.0a2",
+  "version": "0.2.0a3",
   "description": "React component enhancer to easily subscribe to Rx Observables",
   "main": "index.js",
   "scripts": {
