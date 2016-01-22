@@ -73,3 +73,23 @@ export default subscriber(({ observeProp }) => [
 ```sh
 npm install react-rx-subscriber --save
 ```
+
+## API
+
+### `subscriber(observables, { transformObservable })(component)`
+
+Returns a new component that will be subscribed to the passed observables,
+rendering using the passed component.
+Must be invoked twice (result of first call is a function to which you pass your component).
+
+- `observables` either:
+  - An *array of Rx.Observables* to subscribe to.
+    Each observable must map to an object with the props that are to be passed.
+    e.g. `observeSomething().map(something => ({ propName: something }))`
+  - A *function returning an array of Rx.Observables* to subscribe to, again mapping to props.
+    The function is passed an object with the signature `({ observeProp, allPropsObservable })`:
+    - `observeProp(id)`: *Function* which returns an observable for a particular prop for each unique change.
+    - `allPropsObservable`: An *observable* for all props.
+- `transformObservable(observable)`: A *function* that will be called for every observable allowing an altered observable to be returned,
+e.g. using `.catch()` for error handling.
+- `component`: The *React component* you wish to render with the resolved props.
