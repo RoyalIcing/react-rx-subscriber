@@ -26,11 +26,17 @@ class SubscriberWrapper extends React.Component {
 
     this.disposable = new Rx.CompositeDisposable();
 
-    let { observables: resolvedObservables, transformObservable, forwardedProps } = props;
+    const { observables, transformObservable, forwardedProps } = props;
+    let resolvedObservables;
 
-    if (isFunction(resolvedObservables)) {
-      this.propsSubject = new Rx.Subject();
-      resolvedObservables = resolvedObservables(this.propsSubject.asObservable());
+    if (isFunction(observables)) {
+      const propsSubject = new Rx.Subject();
+      const observeProp = (propID) => propsSubject.map(props => props[propID]).distinctUntilChanged();
+      resolvedObservables = observables({ observeProp, allPropsObservable: propsSubject.asObservable() });
+      this.propsSubject = propsSubject;
+    }
+    else {
+      resolvedObservables = observables;
     }
 
     resolvedObservables.forEach(observable => {
