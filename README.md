@@ -56,9 +56,8 @@ import { observeListWithID } from '../services/list';
 
 const PendingList = (props) => !!props.items ? <List { ...props } /> : <Spinner />;
 
-export default subscriber(propsObservable => [
-  propsObservable.map(({ id }) => id)
-    .distinctUntilChanged()
+export default subscriber(({ observeProp }) => [
+  observeProp('id')
     .flatMap(observeListWithID)
     .map(items => ({ items })),
 ])(PendingList);
