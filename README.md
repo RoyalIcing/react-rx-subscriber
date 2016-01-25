@@ -88,7 +88,8 @@ Must be invoked twice (result of first call is a function to which you pass your
     e.g. `observeSomething().map(something => ({ propName: something }))`
   - A *function returning an array of Rx.Observables* to subscribe to, again mapping to props.
     The function is passed an object with the signature `({ observeProp, allPropsObservable })`:
-    - `observeProp(id)`: *Function* which returns an observable for a particular prop for each unique change.
+    - `observeProp(id)`: *Function* which returns an observable for a particular prop for each distinct change.
+    - `observeProps(ids...)`: *Function* which returns an observable for a set of props for each distinct change.
     - `allPropsObservable`: An *observable* for all props.
 - `transformObservable(observable)`: A *function* that will be called for every observable allowing an altered observable to be returned,
 e.g. using `.catch()` for error handling.
