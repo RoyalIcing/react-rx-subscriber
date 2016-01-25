@@ -44,7 +44,7 @@ class SubscriberWrapper extends React.Component {
     });
 
     if (this.propsSubject) {
-      this.propsSubject.onNext(props);
+      this.propsSubject.onNext(forwardedProps);
     }
   }
 
@@ -54,7 +54,7 @@ class SubscriberWrapper extends React.Component {
 
   componentWillReceiveProps(nextProps) {
     if (this.propsSubject) {
-      this.propsSubject.onNext(nextProps);
+      this.propsSubject.onNext(nextProps.forwardedProps);
     }
   }
 
