@@ -32,7 +32,12 @@ class SubscriberWrapper extends React.Component {
     if (isFunction(observables)) {
       const propsSubject = new Rx.Subject();
       const observeProp = (propID) => propsSubject.map(props => props[propID]).distinctUntilChanged();
-      resolvedObservables = observables({ observeProp, allPropsObservable: propsSubject.asObservable() });
+      const observeProps = (...propIDs) => propsSubject.distinctUntilChanged(props => props,
+        (a, b) => propIDs.every(propID => a[propID] === b[propID])
+      );
+
+      resolvedObservables = observables({ observeProp, observeProps, allPropsObservable: propsSubject.asObservable() });
+      
       this.propsSubject = propsSubject;
     }
     else {
